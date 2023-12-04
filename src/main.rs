@@ -17,7 +17,7 @@ fn main() {
         }
     }
 
-    // println!("{}", input_total);
+    println!("{}", input_total);
 }
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
@@ -50,10 +50,9 @@ fn read_line_for_digits(line: String) -> u32 {
         };
 
         if first_digit.is_none() {
-            first_digit = char_to_digit
-        } else {
-            last_digit = char_to_digit;
+            first_digit = char_to_digit;
         }
+        last_digit = char_to_digit;
     }
 
     let final_tuple: Vec<u32>;

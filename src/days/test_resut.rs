@@ -73,10 +73,14 @@ pub fn find_sum_of_nested_scratchcard_points() {
                 let reference_to_u32: &u32 = &my_u32;
                 card_count_map.insert(reference_to_u32.clone(), 1);
                 if let Some(entry) = card_count_map.get_mut(reference_to_u32) {
-                    *entry += 1;
+                    *entry += 0;
                 } else {
                     card_count_map.insert(reference_to_u32.clone(), 1);
                 }
+                for (key, value) in &card_count_map {
+                    println!("Key: {}, Value: {}", key, value);
+                }
+                println!("--------------------------");
                 let number_of_times_to_play =
                     if let Some(&value) = card_count_map.get(reference_to_u32) {
                         value
@@ -85,7 +89,7 @@ pub fn find_sum_of_nested_scratchcard_points() {
                     };
                 // println!("{} : {}", reference_to_u32, number_of_times_to_play);
                 println!(
-                    "How many extra times are we playing?: {}",
+                    "How many times are we playing?: {}",
                     number_of_times_to_play
                 );
 
@@ -154,7 +158,7 @@ fn find_number_of_points_won_recursive(
     println!("Num Won: {} Index: {}", num_won, index,);
 
     if num_won > 0 {
-        for win in index + 1..=index + num_won + 1 {
+        for win in index + 2..=index + num_won + 1 {
             if let Some(entry) = game_map.get_mut(&win) {
                 *entry += 1;
             } else {

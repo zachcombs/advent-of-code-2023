@@ -39,11 +39,6 @@ fn find_minimum_num_of_blocks(game: &String) -> i32 {
     for reveal in game_data[1].split(";") {
         for cubes_by_color in reveal.split(",") {
             let number_of_cube_of_color: Vec<&str> = cubes_by_color.trim().split(" ").collect();
-            // if possible_game_restraints.get(number_of_cube_of_color[1])
-            //     < number_of_cube_of_color[0].parse::<i32>().as_ref().ok()
-            // {
-            //     return 0;
-            // }
             match min_block_hashmap.get(number_of_cube_of_color[1]) {
                 Some(value) => {
                     if value

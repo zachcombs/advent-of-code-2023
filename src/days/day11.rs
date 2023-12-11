@@ -1,5 +1,4 @@
 use std::{
-    collections::HashMap,
     fs::File,
     io::{self, BufRead},
     path::Path,
@@ -15,25 +14,35 @@ where
 
 fn expand_universe_on_empty_column_or_row(universe: Vec<Vec<char>>) -> Vec<Vec<char>> {
     let mut new_universe: Vec<Vec<char>> = Vec::new();
+
     for row in universe.into_iter().rev() {
         new_universe.insert(0, row.clone());
         if row.iter().all(|&point| point == '.') {
-            new_universe.insert(0, row)
+            new_universe.insert(0, row.clone());
         }
     }
 
-    let transposed_universe: Vec<Vec<_>> = (0..new_universe[0].len())
+    let mut transposed_universe: Vec<Vec<_>> = (0..new_universe[0].len())
         .map(|col_index| new_universe.iter().map(|row| row[col_index]).collect())
         .collect();
 
-    for column in transposed_universe {
-        new_universe.push(column.clone()); // Insert the column into new_universe
-        if column.iter().all(|&point| point == '.') {
-            new_universe.push(column); // Insert the column again if it satisfies the condition
+    for row in transposed_universe.clone().into_iter().rev() {
+        transposed_universe.insert(0, row.clone());
+        if row.iter().all(|&point| point == '.') {
+            transposed_universe.insert(0, row);
         }
     }
 
-    return new_universe;
+    let reverse_transposed_universe: Vec<Vec<_>> = (0..transposed_universe[0].len())
+        .map(|col_index| {
+            transposed_universe
+                .iter()
+                .map(|row| row[col_index])
+                .collect()
+        })
+        .collect();
+
+    reverse_transposed_universe
 }
 
 pub fn find_sum_of_shortest_path_of_pairs() {
@@ -53,4 +62,4 @@ pub fn find_sum_of_shortest_path_of_pairs() {
     }
 }
 
-fn initialize_input_to_galaxy_map() {}
+// fn initialize_input_to_galaxy_map() {}

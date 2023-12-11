@@ -23,7 +23,12 @@ fn expand_universe_on_empty_column_or_row(universe: Vec<Vec<String>>) -> Vec<Vec
     }
 
     let mut transposed_universe: Vec<Vec<_>> = (0..new_universe[0].len())
-        .map(|col_index| new_universe.iter().map(|row| row[col_index].clone()).collect())
+        .map(|col_index| {
+            new_universe
+                .iter()
+                .map(|row| row[col_index].clone())
+                .collect()
+        })
         .collect();
 
     for row in transposed_universe.clone().iter().rev() {
@@ -49,8 +54,8 @@ fn convert_galaxy_to_number(universe: &Vec<Vec<String>>) -> Vec<Vec<String>> {
     let mut new_universe = universe.clone();
     let mut galaxy_index = 1;
 
-    for (row_index, row) in new_universe.iter_mut().enumerate() {
-        for (point_index, point) in row.iter_mut().enumerate() {
+    for row in new_universe.iter_mut() {
+        for point in row.iter_mut() {
             if *point == "#" {
                 *point = galaxy_index.to_string();
                 println!("{}", *point);

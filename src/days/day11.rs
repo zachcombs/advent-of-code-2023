@@ -18,24 +18,20 @@ fn expand_universe_on_empty_column_or_row(universe: Vec<Vec<char>>) -> Vec<Vec<c
     for row in universe.into_iter().rev() {
         new_universe.insert(0, row.clone());
         if row.iter().all(|&point| point == '.') {
-            // Insert the row at the beginning of the new universe
             new_universe.insert(0, row)
         }
     }
 
-    // let num_of_columns_in_galaxy = universe.get(0).map_or(0, |row| row.len());
-    // for col_index in 0..num_of_columns_in_galaxy {
-    //     for row in universe {
-    //         if let Some(point) = row.get(col_index) {
-    //             if *point != '.' {
-    //                 break;
-    //             }
-    //         }
-    //         if col_index == num_of_columns_in_galaxy {
-    //             universe.insert(x, *row)
-    //         }
-    //     }
-    // }
+    let transposed_universe: Vec<Vec<_>> = (0..new_universe[0].len())
+        .map(|col_index| new_universe.iter().map(|row| row[col_index]).collect())
+        .collect();
+
+    for column in transposed_universe {
+        new_universe.push(column.clone()); // Insert the column into new_universe
+        if column.iter().all(|&point| point == '.') {
+            new_universe.push(column); // Insert the column again if it satisfies the condition
+        }
+    }
 
     return new_universe;
 }

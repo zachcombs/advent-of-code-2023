@@ -1,8 +1,11 @@
 use std::{
+    collections::HashMap,
     fs::File,
     io::{self, BufRead},
     path::Path,
 };
+
+use indexmap::IndexMap;
 
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
 where
@@ -31,23 +34,13 @@ fn expand_universe_on_empty_column_or_row(universe: Vec<Vec<String>>) -> Vec<Vec
         })
         .collect();
 
-    for row in transposed_universe.clone().iter().rev() {
-        transposed_universe.insert(0, row.clone());
+    for (index, row) in transposed_universe.clone().iter().enumerate().rev() {
         if row.iter().all(|point| point == ".") {
-            transposed_universe.insert(0, row.to_vec());
+            transposed_universe.insert(index, row.to_vec());
         }
     }
 
-    let reverse_transposed_universe: Vec<Vec<_>> = (0..transposed_universe[0].len())
-        .map(|col_index| {
-            transposed_universe
-                .iter()
-                .map(|row| row[col_index].clone())
-                .collect()
-        })
-        .collect();
-
-    reverse_transposed_universe
+    return transposed_universe;
 }
 
 fn convert_galaxy_to_number(universe: &Vec<Vec<String>>) -> Vec<Vec<String>> {
@@ -58,7 +51,6 @@ fn convert_galaxy_to_number(universe: &Vec<Vec<String>>) -> Vec<Vec<String>> {
         for point in row.iter_mut() {
             if *point == "#" {
                 *point = galaxy_index.to_string();
-                println!("{}", *point);
                 galaxy_index += 1;
             }
         }
@@ -67,9 +59,39 @@ fn convert_galaxy_to_number(universe: &Vec<Vec<String>>) -> Vec<Vec<String>> {
     return new_universe;
 }
 
+fn find_sum_of_paths_between_pairs(universe: Vec<Vec<String>>) {
+    let mut map_of_galaxy_coords: IndexMap<String, Vec<i32>> = IndexMap::new();
+    let mut sum_of_distances: i32 = 0;
+
+    for (x, row) in universe.iter().enumerate() {
+        for (y, point) in row.iter().enumerate() {
+            if point != "." {
+                map_of_galaxy_coords.insert(point.to_string(), vec![x as i32, y as i32]);
+            }
+        }
+    }
+
+    for num_to_skip in 0..map_of_galaxy_coords.len() {
+        let mut iter = map_of_galaxy_coords.iter().skip(num_to_skip);
+        let mut base_galaxy: Vec<i32> = vec![0, 0];
+        let mut current_galaxy = "";
+        while let Some((key, value)) = iter.next() {
+            if current_galaxy == "" {
+                base_galaxy = value.to_vec();
+                current_galaxy = key;
+                continue;
+            }
+            let difference: i32 =
+                (base_galaxy[0] - (value[0])).abs() + (base_galaxy[1] - value[1]).abs();
+            sum_of_distances += difference;
+        }
+    }
+    println!("This is the sum: {}", sum_of_distances);
+}
+
 pub fn find_sum_of_shortest_path_of_pairs() {
     let mut universe: Vec<Vec<String>> = Vec::new();
-    if let Ok(lines) = read_lines("inputs/day_11_small_input.txt") {
+    if let Ok(lines) = read_lines("inputs/day_11_input.txt") {
         for line in lines {
             if let Ok(line) = line {
                 universe.push(line.chars().map(|c| c.to_string()).collect());
@@ -79,10 +101,5 @@ pub fn find_sum_of_shortest_path_of_pairs() {
 
     let expanded_universe = expand_universe_on_empty_column_or_row(universe);
     let numbafied_universe = convert_galaxy_to_number(&expanded_universe);
-
-    for row in &numbafied_universe {
-        println!("{:?}", row);
-    }
+    find_sum_of_paths_between_pairs(numbafied_universe);
 }
-
-// fn initialize_input_to_galaxy_map() {}
